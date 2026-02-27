@@ -1,4 +1,6 @@
-class Product {
+export const prod_key = "products";
+
+export class Product {
     constructor(id, name, desc, image, price) {
         this.id = id;
         this.name = name;
@@ -7,5 +9,3 @@ class Product {
         this.price = price;
     }
 }
-
-export { Product };

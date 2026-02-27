@@ -1,39 +1,37 @@
-import { getProducts } from "./storage.js";
-import { addProduct, editProduct, deleteProduct } from "./crud.js";
+import { Product } from "./model.js";
+import { getProducts, generateId, getIndex } from "./storage.js";
 
-let currentSort = "";
-
-function showProductForm(flag, editid = 0) {
-
-    const pTitle = document.getElementById("pTitle");
-    const btnSubmit = document.getElementById("btnSubmit");
-    document.getElementById("productForm").reset();
-
-    if (flag === 0) {
-        pTitle.innerText = "Add Product Form";
-        btnSubmit.onclick = function () { addProduct(); };
-        btnSubmit.className = "mt-5 mb-4 px-5 btn btn-success border border-dotted";
-        btnSubmit.innerText = "Add";
-        document.querySelector(".preview").style.display = "none";
+export function togglePage() {
+    const productform = document.getElementById("productForm");
+    if (productform.style.display == "none" || productform.style.display == "") {
+        document.getElementById("btnNewProduct").style.display = "none";
+        document.getElementById("productList").style.display = "none";
+        document.getElementById("productForm").style.display = "block";
+    } else {
+        document.getElementById("btnNewProduct").style.display = "block";
+        document.getElementById("productForm").style.display = "none";
+        document.getElementById("productList").style.display = "block";
     }
-    else {
-        pTitle.innerText = "Edit Product Form";
-        btnSubmit.onclick = function () { editProduct(editid); };
-        btnSubmit.className = "mt-5 mb-4 px-5 btn btn-info border border-dotted";
-        btnSubmit.innerText = "Update";
-        fillEditform(editid);
-    }
-
-    togglePage();
-
-    const fileInput = document.getElementById("prodImage");
-    fileInput.onchange = function () { previewFile(fileInput); };
 }
 
-function fillEditform(editid) {
+export function previewFile(fileInput) {
+    const preview = document.querySelector("#imgView");
+    const file = fileInput.files[0];
+    const reader = new FileReader();
 
+    reader.addEventListener("load", () => {
+        preview.src = reader.result;
+        document.querySelector(".preview").style.display = "block";
+    });
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+
+export function fillEditform(editid) {
     const prod_array = getProducts();
-    let pos = prod_array.findIndex(p => p.id === editid);
+    let pos = getIndex(editid, prod_array);
 
     document.getElementById("prodName").value = prod_array[pos].name;
     document.getElementById("prodDesc").value = prod_array[pos].desc;
@@ -42,77 +40,115 @@ function fillEditform(editid) {
     document.getElementById("imgView").src = prod_array[pos].image;
 }
 
-function showProductList() {
-
-    let arr_obj = getProducts();
-
-    if (currentSort) {
-        const [field, order] = currentSort.split("-");
-        arr_obj.sort((a, b) => {
-            if (field === "name")
-                return order === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-            if (field === "price")
-                return order === "asc" ? a.price - b.price : b.price - a.price;
-            return order === "asc" ? a.id - b.id : b.id - a.id;
-        });
+export function showProductList(newarray = null) {
+    let arr_obj;
+    if (newarray == null) {
+        arr_obj = getProducts();
+    } else {
+        arr_obj = newarray;
     }
 
     let product_el = document.getElementById("prodItems");
     product_el.innerHTML = "";
 
     arr_obj.forEach(obj => {
-
         let tr_el = document.createElement("tr");
 
         tr_el.innerHTML = `
-            <td>${obj.id}</td>
+            <td scope="row">${obj.id}</td>
             <td>${obj.name}</td>
             <td>${obj.desc}</td>
-            <td><img src="${obj.image}" style="height:80px"></td>
-            <td>${obj.price}</td>
-            <td><button class="btn btn-warning editBtn" data-id="${obj.id}">Edit</button></td>
-            <td><button class="btn btn-danger deleteBtn" data-id="${obj.id}">Delete</button></td>
-        `;
+            <td><img src="${obj.image}" class="object-fit-cover" style="height:80px"></td>
+            <td>${obj.price} $</td>
+               <td id="pEdit"><button id="btnEdit" class="btn btn-warning" onclick="showProductForm(1,${obj.id})" >Edit</button></td>
+        <td id="pDelete"><button id="btnDelete" class="btn btn-danger" onclick="deleteProduct(${obj.id})">Delete</button></td>
+            `;
+        
 
+        tr_el.classList.add("table-light");
         product_el.appendChild(tr_el);
     });
 
+    document.getElementById("productForm").style.display = "block";
     togglePage();
 }
 
-function togglePage() {
+export function addProduct() {
+    let prod_array = getProducts();
+    const id = generateId();
 
-    const productform = document.getElementById("productForm");
+    const inp_name = document.getElementById("prodName").value;
+    const inp_desc = document.getElementById("prodDesc").value;
+    const img_string = document.getElementById("imgView").getAttribute("src");
+    const inp_Price = document.getElementById("prodPrice").value;
 
-    if (productform.style.display == "none" || productform.style.display == "") {
-        document.getElementById("btnNewProduct").style.display = "none";
-        document.getElementById("productList").style.display = "none";
-        document.getElementById("productForm").style.display = "block";
-    }
-    else {
-        document.getElementById("btnNewProduct").style.display = "block";
-        document.getElementById("productForm").style.display = "none";
-        document.getElementById("productList").style.display = "block";
+    if (!inp_name || !inp_desc || !inp_Price || !img_string) {
+        alert("All fields are Required!");
+    } else {
+        const new_product = new Product(id, inp_name, inp_desc, img_string, inp_Price);
+        prod_array.push(new_product);
+        localStorage.setItem("products", JSON.stringify(prod_array));
+        showProductList();
     }
 }
 
-function previewFile(fileInput) {
+export function editProduct(id) {
+    let product_array = getProducts();
 
-    const preview = document.querySelector("#imgView");
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+    const inp_name = document.getElementById("prodName").value;
+    const inp_desc = document.getElementById("prodDesc").value;
+    const inp_Price = document.getElementById("prodPrice").value;
+    const inp_image=document.getElementById("prodImage").files[0];
+    if (!inp_name || !inp_desc || !inp_Price) {
+        alert("All fields are Required!");
+    } else {
+        let pos = getIndex(id, product_array);
+        product_array[pos].name = inp_name;
+        product_array[pos].desc = inp_desc;
+        product_array[pos].price = inp_Price;
+        if(inp_image)
+        { 
+            product_array[pos].image = document.getElementById("imgView").getAttribute("src");
+        }
+        
 
-    reader.onload = function () {
-        preview.src = reader.result;
-        document.querySelector(".preview").style.display = "block";
-    };
-
-    if (file) reader.readAsDataURL(file);
+        localStorage.setItem("products", JSON.stringify(product_array));
+        showProductList();
+    }
 }
 
-function setSort(value) {
-    currentSort = value;
+export function deleteProduct(id) {
+    let result = confirm("Are you sure you want to delete?");
+    if (result) {
+        let product_array = getProducts();
+        let pos = getIndex(id, product_array);
+        product_array.splice(pos, 1);
+        localStorage.setItem("products", JSON.stringify(product_array));
+    }
     showProductList();
 }
 
-export { showProductForm, showProductList, deleteProduct, setSort };
+export function getSorted(product_array, svalue) {
+    let sorted_array;
+    switch (svalue) {
+        case "id-asc":
+            sorted_array = product_array.toSorted((a, b) => a.id - b.id);
+            break;
+        case "id-desc":
+            sorted_array = product_array.toSorted((a, b) => b.id - a.id);
+            break;
+        case "name-asc":
+            sorted_array = product_array.toSorted((a, b) => a.name.localeCompare(b.name));
+            break;
+        case "name-desc":
+            sorted_array = product_array.toSorted((a, b) => b.name.localeCompare(a.name));
+            break;
+        case "price-asc":
+            sorted_array = product_array.toSorted((a, b) => a.price - b.price);
+            break;
+        case "price-desc":
+            sorted_array = product_array.toSorted((a, b) => b.price - a.price);
+            break;
+    }
+    return sorted_array;
+}

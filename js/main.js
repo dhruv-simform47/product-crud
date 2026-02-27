@@ -13,24 +13,26 @@ import { getProducts } from "./storage.js";
 import { debounce } from "./utils.js";
 
 
-document.getElementById("btnCancel").addEventListener("click",()=> {
+document.getElementById("btnCancel").addEventListener("click", () => {
     showProductList();
 });
 
 
-document.getElementById("btnNewProduct").addEventListener("click",()=> {
+document.getElementById("btnNewProduct").addEventListener("click", () => {
     showProductForm(0);
 });
 
 
 
-document.getElementById("btnShowProduct").addEventListener("click",()=> {
+document.getElementById("btnShowProduct").addEventListener("click", () => {
     showProductList();
 });
 
 document.addEventListener("DOMContentLoaded", () => {
     showProductList();
 });
+
+//this handle the new product button and edit button 
 
 window.showProductForm = function (flag, editid = 0) {
     const pTitle = document.getElementById("pTitle");
@@ -63,6 +65,8 @@ window.showProductForm = function (flag, editid = 0) {
 
 window.deleteProduct = deleteProduct;
 
+//sorting function
+
 const sortSelect = document.getElementById("sortSelect");
 
 sortSelect.addEventListener("change", function () {
@@ -72,13 +76,22 @@ sortSelect.addEventListener("change", function () {
     showProductList(sorted_array);
 });
 
+
+
+
+//filter function
 function getFilltered(searchId) {
     if (searchId == "") {
         showProductList();
     } else {
         const prod_array = getProducts();
         const newarray = prod_array.filter(prod => searchId == prod.id);
-        showProductList(newarray);
+
+        if (newarray.length > 0) {
+            showProductList(newarray);
+        } else {
+            window.alert("No data for id:  "+ searchId);
+        }
     }
 }
 

@@ -6,11 +6,14 @@ export function togglePage() {
     if (productform.style.display == "none" || productform.style.display == "") {
         document.getElementById("btnNewProduct").style.display = "none";
         document.getElementById("productList").style.display = "none";
+        document.getElementById("searchFilter").style.display="none";
         document.getElementById("productForm").style.display = "block";
     } else {
-        document.getElementById("btnNewProduct").style.display = "block";
         document.getElementById("productForm").style.display = "none";
+        document.getElementById("btnNewProduct").style.display = "block";
         document.getElementById("productList").style.display = "block";
+        document.getElementById("searchFilter").style.display="block";
+
     }
 }
 

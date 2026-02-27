@@ -17,6 +17,17 @@ document.getElementById("btnCancel").addEventListener("click",()=> {
     showProductList();
 });
 
+
+document.getElementById("btnNewProduct").addEventListener("click",()=> {
+    showProductForm(0);
+});
+
+
+
+document.getElementById("btnShowProduct").addEventListener("click",()=> {
+    showProductList();
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     showProductList();
 });

@@ -1,4 +1,4 @@
-export const prod_key = "products";
+export const PRODUCT_KEY = "products";
 
 export class Product {
     constructor(id, name, desc, image, price) {

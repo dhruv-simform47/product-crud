@@ -1,13 +1,13 @@
-import { prod_key } from "./model.js";
+import { PRODUCT_KEY } from "./model.js";
 
 export function getProducts() {
-    return JSON.parse(localStorage.getItem(prod_key)) || [];
+    return JSON.parse(localStorage.getItem(PRODUCT_KEY)) || [];
 }
 
 export function generateId() {
-    let p_array = getProducts();
-    if (p_array.length == 0) return 1;
-    return (Number(p_array[p_array.length - 1].id) + 1);
+    let productArray = getProducts();
+    if (productArray.length == 0) return 1;
+    return (Number(productArray[productArray.length - 1].id) + 1);
 }
 
 export function getIndex(id, parray) {

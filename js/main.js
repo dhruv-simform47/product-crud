@@ -12,7 +12,6 @@ import {
 import { getProducts } from "./storage.js";
 import { debounce } from "./utils.js";
 
-
 document.getElementById("btnCancel").addEventListener("click", () => {
     showProductList();
 });
@@ -21,8 +20,6 @@ document.getElementById("btnCancel").addEventListener("click", () => {
 document.getElementById("btnNewProduct").addEventListener("click", () => {
     showProductForm(0);
 });
-
-
 
 document.getElementById("btnShowProduct").addEventListener("click", () => {
     showProductList();
@@ -35,23 +32,23 @@ document.addEventListener("DOMContentLoaded", () => {
 //this handle the new product button and edit button 
 
 window.showProductForm = function (flag, editid = 0) {
-    const pTitle = document.getElementById("pTitle");
-    const btnSubmit = document.getElementById("btnSubmit");
+    const PROD_TITLE = document.getElementById("pTitle");
+    const BTNSUBMIT = document.getElementById("btnSubmit");
     document.getElementById("productForm").reset();
 
     if (flag === 0) {
-        pTitle.innerText = "Add Product Form";
-        btnSubmit.onclick = function () { addProduct(); };
-        btnSubmit.classList.remove("btn-secondary");
-        btnSubmit.classList.add("btn-success");
-        btnSubmit.innerText = "Add";
+        PROD_TITLE.innerText = "Add Product Form";
+        BTNSUBMIT.onclick = function () { addProduct(); };
+        BTNSUBMIT.classList.remove("btn-secondary");
+        BTNSUBMIT.classList.add("btn-success");
+        BTNSUBMIT.innerText = "Add";
         document.querySelector(".preview").style.display = "none";
     } else {
-        pTitle.innerText = "Edit Product Form";
-        btnSubmit.onclick = function () { editProduct(editid); };
-        btnSubmit.classList.remove("btn-success");
-        btnSubmit.classList.add("btn-info");
-        btnSubmit.innerText = "Update";
+        PROD_TITLE.innerText = "Edit Product Form";
+        BTNSUBMIT.onclick = function () { editProduct(editid); };
+        BTNSUBMIT.classList.remove("btn-success");
+        BTNSUBMIT.classList.add("btn-info");
+        BTNSUBMIT.innerText = "Update";
         fillEditform(editid);
     }
 
@@ -70,22 +67,19 @@ window.deleteProduct = deleteProduct;
 const sortSelect = document.getElementById("sortSelect");
 
 sortSelect.addEventListener("change", function () {
-    const product_array = getProducts();
+    const PRODUCT_ARRAY = getProducts();
     const svalue = this.value;
-    const sorted_array = getSorted(product_array, svalue);
+    const sorted_array = getSorted(PRODUCT_ARRAY, svalue);
     showProductList(sorted_array);
 });
-
-
-
 
 //filter function
 function getFilltered(searchId) {
     if (searchId == "") {
         showProductList();
     } else {
-        const prod_array = getProducts();
-        const newarray = prod_array.filter(prod => searchId == prod.id);
+        const PRODUCT_ARRAY = getProducts();
+        const newarray = PRODUCT_ARRAY.filter(prod => searchId == prod.id);
 
         if (newarray.length > 0) {
             showProductList(newarray);
@@ -95,10 +89,10 @@ function getFilltered(searchId) {
     }
 }
 
-const schedular = debounce(getFilltered, 1000);
+const SCHEDULAR = debounce(getFilltered, 1000);
 
 const searchFilter = document.getElementById("searchFilter");
 
 searchFilter.addEventListener("keyup", function (e) {
-    schedular(e.target.value);
+    SCHEDULAR(e.target.value);
 });

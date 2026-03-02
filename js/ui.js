@@ -2,8 +2,8 @@ import { Product } from "./model.js";
 import { getProducts, generateId, getIndex } from "./storage.js";
 
 export function togglePage() {
-    const productform = document.getElementById("productForm");
-    if (productform.style.display == "none" || productform.style.display == "") {
+    const PRODUCT_FORM = document.getElementById("productForm");
+    if (PRODUCT_FORM.style.display == "none" || PRODUCT_FORM.style.display == "") {
         document.getElementById("btnNewProduct").style.display = "none";
         document.getElementById("productList").style.display = "none";
         document.getElementById("searchFilter").style.display="none";
@@ -33,14 +33,14 @@ export function previewFile(fileInput) {
 }
 
 export function fillEditform(editid) {
-    const prod_array = getProducts();
-    let pos = getIndex(editid, prod_array);
+    const PRODUCT_ARRAY = getProducts();
+    let pos = getIndex(editid, PRODUCT_ARRAY);
 
-    document.getElementById("prodName").value = prod_array[pos].name;
-    document.getElementById("prodDesc").value = prod_array[pos].desc;
-    document.getElementById("prodPrice").value = prod_array[pos].price;
+    document.getElementById("prodName").value = PRODUCT_ARRAY[pos].name;
+    document.getElementById("prodDesc").value = PRODUCT_ARRAY[pos].desc;
+    document.getElementById("prodPrice").value = PRODUCT_ARRAY[pos].price;
     document.querySelector(".preview").style.display = "block";
-    document.getElementById("imgView").src = prod_array[pos].image;
+    document.getElementById("imgView").src = PRODUCT_ARRAY[pos].image;
 }
 
 export function showProductList(newarray = null) {
@@ -96,7 +96,7 @@ export function addProduct() {
 }
 
 export function editProduct(id) {
-    let product_array = getProducts();
+    let productArray = getProducts();
 
     const inp_name = document.getElementById("prodName").value;
     const inp_desc = document.getElementById("prodDesc").value;
@@ -105,17 +105,18 @@ export function editProduct(id) {
     if (!inp_name || !inp_desc || !inp_Price) {
         alert("All fields are Required!");
     } else {
-        let pos = getIndex(id, product_array);
-        product_array[pos].name = inp_name;
-        product_array[pos].desc = inp_desc;
-        product_array[pos].price = inp_Price;
+        let pos = getIndex(id, productArray);
+        productArray[pos].name = inp_name;
+        productArray[pos].desc = inp_desc;
+        productArray[pos].price = inp_Price;
         if(inp_image)
         { 
-            product_array[pos].image = document.getElementById("imgView").getAttribute("src");
+            productArray[pos].image = document.getElementById("imgView").getAttribute("src");
+            console.log(productArray)
         }
         
 
-        localStorage.setItem("products", JSON.stringify(product_array));
+        localStorage.setItem("products", JSON.stringify(productArray));
         showProductList();
     }
 }
@@ -123,35 +124,37 @@ export function editProduct(id) {
 export function deleteProduct(id) {
     let result = confirm("Are you sure you want to delete?");
     if (result) {
-        let product_array = getProducts();
-        let pos = getIndex(id, product_array);
-        product_array.splice(pos, 1);
-        localStorage.setItem("products", JSON.stringify(product_array));
+        let productArray = getProducts();
+        let pos = getIndex(id, productArray);
+        productArray.splice(pos, 1);
+        localStorage.setItem("products", JSON.stringify(productArray));
     }
     showProductList();
 }
 
-export function getSorted(product_array, svalue) {
+export function getSorted(productArray, svalue) {
     let sorted_array;
     switch (svalue) {
         case "id-asc":
-            sorted_array = product_array.toSorted((a, b) => a.id - b.id);
+            sorted_array = productArray.toSorted((a, b) => a.id - b.id);
             break;
         case "id-desc":
-            sorted_array = product_array.toSorted((a, b) => b.id - a.id);
+            sorted_array = productArray.toSorted((a, b) => b.id - a.id);
             break;
         case "name-asc":
-            sorted_array = product_array.toSorted((a, b) => a.name.localeCompare(b.name));
+            sorted_array = productArray.toSorted((a, b) => a.name.localeCompare(b.name));
             break;
         case "name-desc":
-            sorted_array = product_array.toSorted((a, b) => b.name.localeCompare(a.name));
+            sorted_array = productArray.toSorted((a, b) => b.name.localeCompare(a.name));
             break;
         case "price-asc":
-            sorted_array = product_array.toSorted((a, b) => a.price - b.price);
+            sorted_array = productArray.toSorted((a, b) => a.price - b.price);
             break;
         case "price-desc":
-            sorted_array = product_array.toSorted((a, b) => b.price - a.price);
+            sorted_array = productArray.toSorted((a, b) => b.price - a.price);
             break;
+        default:
+            sorted_array=productArray;
     }
     return sorted_array;
 }

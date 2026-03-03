@@ -11,14 +11,14 @@ export function generateId() {
 }
 
 export function getIndex(id, parray) {
-    let pos = parray.findIndex((prod) => {
+    let index = parray.findIndex((prod) => {
         if (prod.id === id) {
             return true;
         }
     });
 
-    if (pos == -1) {
+    if (index == -1) {
         throw new Error("Item To be Updated is not Stored!");
     }
-    return pos;
+    return index;
 }

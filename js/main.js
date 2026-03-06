@@ -58,7 +58,12 @@ window.showProductForm = function (flag, editid = 0) {
   toggleProductView();
 
   const fileInput = document.getElementById("prodImage");
+  fileInput.removeEventListener("change", () => {
+    
+    previewProductImage(fileInput);
+  });
   fileInput.addEventListener("change", () => {
+    
     previewProductImage(fileInput);
   });
 };

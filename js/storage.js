@@ -5,9 +5,18 @@ export function getProducts() {
 }
 
 export function generateId() {
-    let productArray = getProducts();
-    if (productArray.length == 0) return 1;
-    return (Number(productArray[productArray.length - 1].id) + 1);
+  const productArray = getProducts();
+    if (productArray.length === 0) {
+        return 1;
+    }
+    const maxId = productArray.reduce((max, product) => {
+        const idNum = Number(product.id);
+        if (Number.isNaN(idNum)) {
+            return max;
+        }
+        return idNum > max ? idNum : max;
+    }, 0);
+    return maxId + 1;
 }
 
 export function getIndex(id, parray) {
@@ -18,7 +27,7 @@ export function getIndex(id, parray) {
     });
 
     if (index == -1) {
-        throw new Error("Item To be Updated is not Stored!");
+        throw new Error("Product not found for id " + id);
     }
     return index;
 }

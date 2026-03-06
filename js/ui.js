@@ -24,9 +24,11 @@ export function previewProductImage(fileInput) {
   const reader = new FileReader();
 
   reader.addEventListener("load", () => {
-    preview.src = reader.isConfirmed;
+    preview.src = reader.result;
+    
     document.querySelector(".preview").style.display = "block";
   });
+ 
 
   if (file) {
     reader.readAsDataURL(file);
@@ -64,8 +66,8 @@ export function renderProductList(productList = null) {
             <td>${obj.desc}</td>
             <td><img src="${obj.image}" class="object-fit-cover" style="height:80px"></td>
             <td>${obj.price} $</td>
-               <td id="pEdit"><button id="btnEdit" class="btn btn-warning" onclick="showProductForm(1,${obj.id})" >Edit</button></td>
-        <td id="pDelete"><button id="btnDelete" class="btn btn-danger" onclick="deleteProduct(${obj.id})">Delete</button></td>
+               <td class="pEdit"><button class="btn btn-warning btnEdit" onclick="showProductForm(1,${obj.id})">Edit</button></td>
+        <td class="pDelete"><button class="btn btn-danger btnDelete" onclick="deleteProduct(${obj.id})">Delete</button></td>
             `;
 
     tableRow.classList.add("table-light");
@@ -119,7 +121,7 @@ export function editProduct(id) {
       products[index].image = document
         .getElementById("imgView")
         .getAttribute("src");
-      console.log(products);
+      
     }
 
     localStorage.setItem("products", JSON.stringify(products));
